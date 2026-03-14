@@ -6,11 +6,43 @@ import React from 'react'
 const Footer = ({ user, type = 'desktop' }: FooterProps) => {
   const router = useRouter();
 
-  const handleLogOut = async () => {
-    const loggedOut = await logoutAccount();
+  // const handleLogOut = async () => {
+  //   const loggedOut = await logoutAccount();
 
-    if(loggedOut) router.push('/sign-in');
-  }
+  //   if(loggedOut) router.push('/sign-in');
+  // }
+
+  // const handleLogOut = async () => {
+  //   try {
+  //     const res = await fetch('/api/logout');
+  //     const data = await res.json();
+
+  //     if (data.success) {
+  //       router.push('/sign-in'); // redirect after successful logout
+  //     } else {
+  //       console.error('Logout failed on server');
+  //     }
+  //   } catch (err) {
+  //     console.error('Logout request failed:', err);
+  //   }
+  // };
+
+  // chatgpt code
+  const handleLogOut = async () => {
+    try {
+      const res = await fetch("/api/logout");
+      const data = await res.json();
+
+      if (data.success) {
+        router.push("/sign-in"); // redirect after logout
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
+
 
   return (
     <footer className='footer'>
