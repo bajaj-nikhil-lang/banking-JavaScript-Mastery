@@ -11,9 +11,22 @@ export const signIn = async ({ email, password }: signInProps) => {
         // Mutation / Database / Make fetch
         const { account } = await createAdminClient();
 
-        const response = await account.createEmailPasswordSession(email, password);
+        // const response = await account.createEmailPasswordSession(email, password);
+        const session = await account.createEmailPasswordSession(email, password);
 
-        return parseStringify(response);
+        // chatgpt code from here
+        const cookieStore = await cookies();
+
+        cookieStore.set("appwrite-session", session.secret, {
+          path: "/",
+          httpOnly: true,
+          sameSite: "strict",
+          secure: true,
+        });
+        // chatgpt code upto abovwe
+
+        // return parseStringify(response);
+        return parseStringify(session);
     } catch (error) {
         console.log('Error ', error);
     }
@@ -70,8 +83,18 @@ export async function getLoggedInUser() {
     const { account } = await createSessionClient();
     // return await account.get();
     const user = await account.get();
+
+    console.log("Logged in user from Appwrite:", user);
+
     return parseStringify(user);
   } catch (error) {
+    // console.log("getLoggedInUser error:", error);
+    // return null;
+    if (error) {
+      console.log("No logged-in user, returning null for guest");
+      return null;
+    }
+    console.error("getLoggedInUser unexpected error:", error);
     return null;
   }
 }
